@@ -18,7 +18,8 @@ type UsersProps = {
 export default function QuizList(){
 
     // const {generateUser,generateUsers,mockUser} = ChanceUser()
-    const {mockUser, mockUserList, mockQuizList} = ChanceUser()
+
+    const { mockQuizList } = ChanceUser()
 
     const nav = useNavigate();
 
@@ -27,11 +28,14 @@ export default function QuizList(){
     // const userInfo={}};
     // useEffect(()=>{
     //     return () => {userInfo = generateUser()}
-    // },[]);   chance 모듈이 뭔가 있는듯. 
+    // },[]);   chance 모듈이 뭔가 있는듯. 왜 안되지. 
 
     const movetoQuizDetail = (id:string) => {
-        console.log('move click')
-        nav(`/quiz-list/${id}`,{state:{id: id}})
+        nav(`/quiz-pack/${id}`,{state:{id: id}})
+    }
+
+    const movetoUserDetail = (userid:string) => {
+        nav(`/user/${userid}`,{state:{userid: userid}})
     }
 
     return (
@@ -46,12 +50,10 @@ export default function QuizList(){
                     <th>Email</th>
                 </tr>
                 {mockQuizList.map((list,idx)=>
-                    <tr >
-                        <td>{idx}</td>
-                        <td>{list.created}</td>
-                        {/* <td><Link to={`/quiz-list/${list.id}`}>{list.name}</Link></td>  */}
+                    <tr>
+                        <td>{idx+1}</td>
+                        <td onClick={()=>movetoUserDetail(list.created)}>{list.created}</td>
                         <td onClick={()=>movetoQuizDetail(list.id)}>{list.name}</td> 
-
                         <td>{list.email}</td>
                     </tr>
                 )} 

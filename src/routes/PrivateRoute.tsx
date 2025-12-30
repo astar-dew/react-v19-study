@@ -8,7 +8,7 @@ export default function PrivateRoute(){
     let movePath = '/';
     if(localStorage.getItem('loginId')){
         console.log('localstorage 에 ID 있음')
-        movePath='/quiz-list'
+        movePath='/quiz-pack'
     }else{
         console.log('로그인 하라우')
         movePath='/sign-in'

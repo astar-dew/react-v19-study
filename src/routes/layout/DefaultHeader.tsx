@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
-import {Link} from 'react-router-dom'
+import {Link, useNavigate} from 'react-router-dom'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { useAuthStore } from '../../store/AuthStore'
 // import type {FC} from 'react'
+
 
 type headerProp = {
     headerTitle?:string
@@ -23,13 +25,29 @@ type headerProp = {
 export default function DefaultHeader({headerTitle} : headerProp){
     //rendering 순서 체크가 필요할듯
     ///컴포넌트 렌더링을 할떄마다 localstorage 읽음. -> useEffect를 사용
-    const [signInId,setSignInId] = useState<String|null>(null);
-    useEffect(()=>{
-        const loginId = localStorage.getItem('loginId')
-        setSignInId(loginId);
-        console.log('loginId',loginId);
+// 1. 서버 사이드 렌더링(SSR) 대응: localStorage는 브라우저에만 있어서 서버에서 에러 발생 가능
+// 2. 렌더링 최적화: useEffect는 DOM이 그려진 후 실행되어 렌더링을 막지 않음
+// 3. React 규칙 준수: 부수효과(side effect)는 useEffect에서 처리하는 게 권장사항
+    
+    //try 1
+    // const [signInId,setSignInId] = useState<String|null>(null);
+    // useEffect(()=>{
+    //     const loginId = localStorage.getItem('loginId')
+    //     setSignInId(loginId);
+    //     console.log('loginId',loginId);
+    // },[])
 
+    const {loginId,logout,initialize} = useAuthStore();
+    //initialize 를 걍 두면 로그인 시 로그인페이지로 이동 안함. 
+    useEffect(()=>{
+       initialize();
     },[])
+    // initialize();
+    const nav = useNavigate()
+    const handleLogout = () => {
+        logout()
+        nav('/')
+    }
 
     return (
     <header>
@@ -37,10 +55,10 @@ export default function DefaultHeader({headerTitle} : headerProp){
             <div className='flex bg-gray-200 p-4'>
                 <Link to='/' className='ml-4'>Home</Link> 
                 <Link to='/welcome' className='ml-4 text-4'>welcome</Link>
-                {signInId && 
+                {loginId && 
                 <Menu as="div" className="relative inline-block">
                     <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-black ring-1 ring-inset ring-white/5 hover:bg-white/20">
-                        {signInId}
+                        {loginId}
                     </MenuButton>
 
                     <MenuItems
@@ -62,6 +80,7 @@ export default function DefaultHeader({headerTitle} : headerProp){
                             <button
                                 type="submit"
                                 className="block w-full px-4 py-2 text-left text-sm text-gray-300 data-[focus]:bg-white/5 data-[focus]:text-white data-[focus]:outline-none"
+                                onClick={handleLogout}
                             >
                                 Sign out
                             </button>
