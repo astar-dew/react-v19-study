@@ -21,7 +21,7 @@ const formSchem = z.object({
 //홈으로 들어올때 cookie or localStorage 가 없으면 
 // 로그인 페이지로
 export default function Signin(){
-    const navigate = useNavigate();
+    const nav = useNavigate();
 
     const {mockUserList} = MockData()
 
@@ -63,12 +63,12 @@ export default function Signin(){
 
         if(signInResult.length == 1){
             localStorage.setItem('loginId', watch('loginId'))
-            navigate('/quiz-list')
+            nav('/quiz-pack')
         }
     }
 
     const signUp = () => {
-        navigate('/sign-up')
+        nav('/sign-up')
     }
 
     

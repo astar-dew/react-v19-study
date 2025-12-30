@@ -22,8 +22,8 @@ export default function RouteSetup(){
 
             <Route path='/' element={<Layout/>}>            
                 <Route path="/welcome" element={<Home/>}/>
-                <Route path="/quiz-list" element={<QuizList/>}/>
-                <Route path="/quiz-list/:id" element={<QuizDetail/>}/>
+                <Route path="/quiz-pack" element={<QuizList/>}/>
+                <Route path="/quiz-pack/:id" element={<QuizDetail/>}/>
             </Route>
 
             <Route path="/sign-in" element={<Signin/>}/>
