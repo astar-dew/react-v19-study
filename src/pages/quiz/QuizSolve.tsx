@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useState, useRef } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import MockData from '../../data/User'
 
@@ -11,12 +11,8 @@ interface Quiz {
     answer2: string|number;
     answer3: string|number;
     answer4: string|number;
-    correct: number;
+    correct: string|number;
   };
-}
-
-interface QuizAnswer{
-
 }
 
 interface QuizPack {
@@ -37,52 +33,50 @@ export default function QuizSolve(){
     const quiz = quizPack[0].quiz;
 
     // 클로드 참고, 마지막 문제에서 이슈가 있음. 
-    function* quizGenerator(items:{}[]){
-        for(let item of items){
-            yield item
-        }
-    }
-    
-    const [ generator ] = useState(()=> quizGenerator(quiz));
-    const [ selectAnswerVal, setSelectAnswerVal ] = useState<any>();
-    const [ currentIdx, setCurrentIdx] = useState<number>(0);
-    const [ currentQuiz, setCurrentQuiz ] = useState<Quiz>();
+    // function* quizGenerator(items:{}[]){
+    //     for(let item of items){
+    //         yield item
+    //     }
+    // }
 
-    const answerSelectHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [ selectAnswerVal, setSelectAnswerVal ] = useState<any>();
+    const [ currentQuiz, setCurrentQuiz ] = useState<Quiz>();
+    let quizIdx = useRef(0);
+    // const generatorRef = useRef()//초기 렌더링 이후 렌더링 x
+    // const [ generator ] = useState(()=> quizGenerator(quiz));
+    // const [ currentIdx, setCurrentIdx] = useState<number>(0);
+
+    const answerSelectHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setSelectAnswerVal(e.target.value)
     }
 
-    //usestate로 데이터 관리 하는 기준은 뭘까? - rendering 
-
     const submitAnswer = () => {
         // 정답 체크 
-        // setCurrentIdx(currentIdx+1);
-        const next = generator.next();
-        console.log('next',next);
-        if(!next.done){
-            setCurrentIdx(currentIdx+1);
+        quizIdx.current++;
+        if(quizIdx.current === quiz.length){
+            window.confirm(' clear ')
+            nav('/quiz-pack')
+        }
 
-            if(quiz[currentIdx].answer.correct == selectAnswerVal){
+        if(quizIdx.current < quiz.length){
+            setCurrentQuiz(quiz[quizIdx.current])
+            
+            if(quiz[quizIdx.current].answer.correct == selectAnswerVal){
                 window.confirm(' 정답입니다 \n 다음문제를 풀겠습니까?')
             }else{
                 window.confirm('틀렸습니다 \n 다음문제를 풀겠습니까?')
             }
             setSelectAnswerVal(null)
-
-        }else{
-            alert('문제집 clear');
-            return 
         }
-        
     }
 
     const handleHint = () => {
-        setSelectAnswerVal(quiz[currentIdx].answer.correct)
+        setSelectAnswerVal(quiz[quizIdx.current].answer.correct)
     }
 
     useEffect(()=>{
-        setCurrentQuiz(quiz[currentIdx]);
-    },[currentIdx])
+        setCurrentQuiz(quiz[quizIdx.current]);
+    },[quizIdx])
 
 
 
@@ -137,7 +131,7 @@ export default function QuizSolve(){
             <label htmlFor="radio4">{currentQuiz?.answer?.answer4}</label>
         </div>
 
-        
+        <div>현재 진행도 : {quizIdx.current+1}/{quiz.length}</div>
 
         <button onClick={submitAnswer}>제출 </button>
         <button onClick={handleHint}>힌트 </button>
