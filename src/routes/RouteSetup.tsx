@@ -9,7 +9,7 @@ import SignUp from '../pages/user/SignUp'
 import PrivateRoute from './PrivateRoute'
 import QuizList from '../pages/quiz/QuizList'
 import QuizDetail from '../pages/quiz/QuizDetail'
-
+import QuizSolve from '../pages/quiz/QuizSolve'
 
 
 //Router Switch,Route
@@ -24,6 +24,7 @@ export default function RouteSetup(){
                 <Route path="/welcome" element={<Home/>}/>
                 <Route path="/quiz-pack" element={<QuizList/>}/>
                 <Route path="/quiz-pack/:id" element={<QuizDetail/>}/>
+                <Route path="/quiz-pack/:id/quiz/:quizid" element={<QuizSolve/>}/>
             </Route>
 
             <Route path="/sign-in" element={<Signin/>}/>
