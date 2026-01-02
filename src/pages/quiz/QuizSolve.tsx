@@ -33,17 +33,17 @@ export default function QuizSolve(){
     const quiz = quizPack[0].quiz;
 
     // 클로드 참고, 마지막 문제에서 이슈가 있음. 
-    // function* quizGenerator(items:{}[]){
-    //     for(let item of items){
-    //         yield item
-    //     }
-    // }
+    function* quizGenerator(items:{}[]){
+        for(let item of items){
+            yield item
+        }
+    }
 
+    // const generatorRef = useRef()//초기 렌더링 이후 렌더링 x
+    // const [ generator ] = useState(()=> quizGenerator(quiz));
     const [ selectAnswerVal, setSelectAnswerVal ] = useState<any>();
     const [ currentQuiz, setCurrentQuiz ] = useState<Quiz>();
     let quizIdx = useRef(0);
-    // const generatorRef = useRef()//초기 렌더링 이후 렌더링 x
-    // const [ generator ] = useState(()=> quizGenerator(quiz));
     // const [ currentIdx, setCurrentIdx] = useState<number>(0);
 
     const answerSelectHandler = (e: ChangeEvent<HTMLInputElement>) => {
