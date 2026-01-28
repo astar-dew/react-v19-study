@@ -1,5 +1,5 @@
 
-import DefaultButton from '../../component/button/DefaultButton';
+import DefaultButton from '../../component/common/button/DefaultButton';
 import React,{ useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import MockData from '../../data/User'
@@ -7,6 +7,10 @@ import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { REGEX } from '../../format/SignUpReg'
+import STBasicButton from '../../component/common/button/STBasicButton';
+import STBasicLabelInput from '../../component/common/input/STBasicLabelInput';
+import { Eye, EyeOff, UserPlus } from 'lucide-react';
+import STBasicLabelButtonInput from '../../component/common/input/STBasicLabelButtonInput';
 // import { zodResolver } from '@hookform/resolvers/zod';
 
 type SignupForm = {
@@ -37,7 +41,15 @@ export default function SignUp(){
     const [idDupleCheck , setIdDupleCheck] = useState(false);
     const { mockUserList } = MockData();
 
-    const {register, formState: {errors}, handleSubmit} = useForm<SignupForm>({
+    const [ passwordType, setPasswordType ] = useState('password')
+    const [ isPassVisible, setIsPassVisible ] = useState(false)
+
+    const visibleUpdate = () => {
+        setIsPassVisible(!isPassVisible)
+        setPasswordType(isPassVisible? 'text' : 'password')
+    }
+
+    const {register, formState: {errors}, handleSubmit, watch} = useForm<SignupForm>({
         resolver: zodResolver(schema),
         defaultValues:{
             loginId: '',
@@ -58,6 +70,7 @@ export default function SignUp(){
         if( type=='checkBox' ){
             // setFormData(prev =>({...prev, [name]: checked}))
         }else{
+            console.log('handle change')
             setFormData(prev =>({...prev, [name]: value}))
         }
     }
@@ -71,14 +84,17 @@ export default function SignUp(){
     //     }
     // }
 
-    const handleDuplCheck = (e:React.MouseEvent) => {
+    const handleIDDuplCheck = (e:React.MouseEvent) => {
         e.preventDefault();
+        
         const duplResult = mockUserList.find((user) =>  formData.loginId == user.name )
-        if(formData.loginId===''){
+        if(watch('loginId')===''){
             alert('아이디를 입력해주세요');
             return ;
         }
         if(duplResult == null){
+            // id에 다른 값누르면 
+            // 다시 중복확인을 하게 해야함.
             setIdDupleCheck(true);
             alert('사용가능한 아이디입니다.')
             return ;
@@ -90,10 +106,13 @@ export default function SignUp(){
     // const [dupl,setDupl] = useState(false);
     // 중복체크는 어떻게 처리할지?
     const signUp = () => {
-        //check 하는 로직, 각 인풋의 validate 어떻게 할것인지.
-        //메모이제이션 19버전부터는 사용하지 않음. 
-        alert('signup')
-        console.log('form data',document.getElementsByTagName('form'));
+        // check 하는 로직, 각 인풋의 validate 어떻게 할것인지.
+        // 메모이제이션 19버전부터는 사용하지 않음. 
+
+        // loginId: '',
+        // signUpPass: '',
+        // signUpPassCheck: '',
+        // email: '',
     }
 
 
@@ -104,53 +123,86 @@ export default function SignUp(){
         email: z.string(),
     })
 
-    const idDuplCheck = () => {
-        //mock data check
-        alert('duple check')
-        //중복 없을 시state true
-        // setDupl(true);
-    }
 
     return(
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100  p-4">
-            <form id="signUpForm" action="#" onChange={()=>handleChange} onSubmit={handleSubmit((e)=>console.log(e))}>
-                <div className='flex flex-col bg-white rounded-2xl shadow-xl p-4'>
-                    <label htmlFor="loginId">id</label>
-                    <div>
-                        <input id="loginId" className='border p-2' type="text" {...register('loginId')} />
-                        <button onClick={handleDuplCheck}>중복 확인</button>
-                        {/* <DefaultButton buttonText='중복 확인' handleClick={handleDuplCheck}/> */}
-                    </div>
+        <form id="signUpForm" onChange={()=>handleChange} onSubmit={handleSubmit((e)=>console.log(e))}>
+            <div className="flex items-center bg-black justify-center min-h-screen bg-linear-to-br from-blue-50 to-indigo-100  p-4">
+                <div className='flex flex-col bg-white space-y-6 rounded-2xl shadow-xl p-4'>
 
-                    <label htmlFor="signUpPass">password</label>
-                    <input id="signUpPass" className='border p-2' type="password" {...register('signUpPass')}/>
-                    {errors.signUpPass&&<p>{errors.signUpPass.message}</p>}
-                    {/* <input id="signUpPass" name="signUpPass" className='border p-2' type="password" {...register('signUpPass')}/> 
-                     regiter 등록 시 name으로 셋팅되는듯*/} 
+                    {/* <STBasicLabelButtonInput
+                        id='loginId'
+                        labelText='아이디'
+                        placeholder='Enter your Id'
+                        // labelClassName='block'
+                        inputClassName='w-full border rounded-2xl'
+                        {...register('loginId')}
+                        button={
+                            <STBasicButton
+                                className='border-2'
+                                onClick={handleIDDuplCheck}
+                            >중복확인</STBasicButton>}
+                    /> */}
 
-                    <label htmlFor="signUpPassCheck">password check</label>
-                    <input id="signUpPassCheck" className='border p-2' type="password" {...register('signUpPassCheck')} />
-                    {errors.signUpPassCheck&&<p>{errors.signUpPassCheck.message}</p>}
+                    <STBasicLabelInput
+                        id='loginId'
+                        labelText='아이디'
+                        placeholder='Enter your Id'
+                        // labelClassName='block'
+                        inputClassName='w-full border rounded-2xl'
+                        {...register('loginId')}
+                        icon={
+                            <STBasicButton
+                                className='border-2'
+                                onClick={handleIDDuplCheck}
+                            >중복확인</STBasicButton>}
+                    />
 
-                    <label htmlFor="email">eamil</label>
-                    <input id="email" placeholder={'test@xxx.com'}className='border p-2' type="text" {...register('email')} />
-                    {errors.email&&<p>{errors.email.message}</p>}
+                    <STBasicLabelInput
+                        id='signUpPass'
+                        type={passwordType}
+                        labelText='패스워드'
+                        placeholder='Enter Password'
+                        labelClassName='block p-2 '
+                        inputClassName='w-full border p-2 rounded-2xl'
+                        icon={isPassVisible? 
+                            <Eye className="inline" onClick={visibleUpdate}/> : 
+                            <EyeOff className="inline" onClick={visibleUpdate}/> }
+                        {...register('signUpPass')}
+                    />
 
-                    {/* <label htmlFor="gender">gender</label> 
-                    <div>남자<input type="radio" disabled value={'남'} checked={true}/></div>
-                    <div>여자<input type="radio" disabled value={'여'}/></div> */}
-                    {/* radio 어케 처리했는지 까먹음.  */}
-                    {/* <input id="gender" placeholder={'test'}className='border p-2' type="password" /> */}
-                    <button >가입</button>
-                    {/* <DefaultButton buttonText='sign up' handleClick={signUp}/>  */}
+                    <STBasicLabelInput
+                        id='signUpPassCheck'
+                        type={passwordType}
+                        labelText='패스워드 확인'
+                        placeholder='Enter Password'
+                        labelClassName='block p-2 '
+                        inputClassName='w-full border p-2 rounded-2xl'
+                        {...register('signUpPassCheck')}
+                    />
+
+                    <STBasicLabelInput
+                        id='email'
+                        labelText='이메일'
+                        placeholder='Enter your Email'
+                        labelClassName='block p-2 '
+                        inputClassName='border p-2 rounded-2xl'
+                        {...register('email')}
+                    />
+
+                    <STBasicButton
+                        className='border mt-4 p-4 rounded-2xl ' 
+                        onClick={signUp}
+                    >
+                        <UserPlus className='inline mr-2'/>가입
+                    </STBasicButton>
 
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     )
-
 }
 
+// 
 
 
 
