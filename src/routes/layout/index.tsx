@@ -4,20 +4,6 @@ import DefaultNav from "./DefaultNav";
 import DefaultFooter from "./DefaultFooter";
 
 
-
-
-// export default function Layout(){
-//     return (
-//     <div className="flex flex-row">
-//         <DefaultNav/>
-//         <section className="flex-col">
-//             <DefaultHeader/>
-//             <Outlet/>
-//         </section>
-//         <DefaultFooter/>
-//     </div>)
-// }
-
 export const Layout1 = () => {
 
     return(
@@ -35,12 +21,12 @@ export const Layout1 = () => {
 
 export const Layout2 = () => {
     return(
-        <div className="flex flex-row">
+        <div className="flex flex-row min-h-screen">
             <DefaultNav/>
-            <section className="flex-col">
+            <div className="w-full flex-col rounded-xl">
                 <DefaultHeader/>
                 <Outlet/>
-            </section>
+            </div>
             <DefaultFooter/>
         </div>
     )
