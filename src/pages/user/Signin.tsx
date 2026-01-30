@@ -86,8 +86,8 @@ export default function Signin(){
 
     return (
         <form id="signInForm" onSubmit={handleSubmit((e)=>{})} >
-            <div className="flex justify-center bg-black ">
-                <div className='flex flex-col items-center bg-white rounded-2xl shadow-xl p-4 space-y-3'>
+            <div className="flex justify-center items-center  bg-black min-h-screen ">
+                <div className='flex flex-col bg-white rounded-2xl shadow-xl p-4 space-y-3'>
 
                     <section className='flex flex-col items-center p-10'>
                         <h1 className=''><Flower2 color={'red'}className='inline'/>Welcom Back!<Flower2 color={'red'}className='inline'/></h1>
