@@ -126,7 +126,7 @@ export default function SignUp(){
 
     return(
         <form id="signUpForm" onChange={()=>handleChange} onSubmit={handleSubmit((e)=>console.log(e))}>
-            <div className="flex items-center bg-black justify-center min-h-screen bg-linear-to-br from-blue-50 to-indigo-100  p-4">
+            <div className="flex justify-center items-center  bg-black min-h-screen ">
                 <div className='flex flex-col bg-white space-y-6 rounded-2xl shadow-xl p-4'>
 
                     {/* <STBasicLabelButtonInput
