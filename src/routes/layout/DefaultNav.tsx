@@ -1,10 +1,12 @@
 import { Bell, BookOpenText, LayoutDashboard } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , useLocation} from "react-router-dom";
 import Logo1 from '../../asset/svg/jinus.svg'
+import { useEffect } from "react";
 
 export default function DefaultNav(){
 
     const nav = useNavigate();
+    const loc = useLocation();
 
     const NavList = [
         {icon : <LayoutDashboard className="inline mr-2"/>, navText: '대시보드', path: 'dashboard'},
@@ -14,6 +16,14 @@ export default function DefaultNav(){
 
     const moveNav = (path:string) => {
         nav(`/${path}`)
+    }
+
+    function checkHighLight(NavPath:string,locPath:string) {
+        if(locPath.includes(NavPath)){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     return(
@@ -27,8 +37,8 @@ export default function DefaultNav(){
             </div>
             <nav className="justify-around text-white bg-[#2262c6] min-h-screen rounded-tr-xl" >
                 {NavList.map((Nav)=>(
-                    <div className="m-3 p-3 rounded-xl 
-                            hover:bg-white hover:text-[#2262c6] hover:font-bold hover:cursor-pointer " 
+                    <div className={`m-3 p-3 rounded-xl ${checkHighLight(Nav.path, loc.pathname) ? 'bg-white text-[#2262c6]' :''}
+                            hover:bg-white hover:text-[#2262c6] hover:font-bold hover:cursor-pointer `} 
                             onClick={()=>moveNav(Nav.path)}>
                         { Nav.icon } { Nav.navText }
                     </div>
