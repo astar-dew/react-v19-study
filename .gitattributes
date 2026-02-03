@@ -1,0 +1,42 @@
+# 모든 텍스트 파일을 LF로 통일
+* text=auto eol=lf
+
+# 특정 파일만 설정
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+
+# Windows 배치 파일은 CRLF 유지
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 이진 파일은 건드리지 않음
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+
+
+#github commit 시 운영체제에 따른 줄띄기 관련 설정
+# 1. 변경사항 저장 (있다면)
+#git add .
+#git commit -m "Save changes before line ending fix"
+
+# 2. Git 캐시 삭제
+#git rm --cached -r .
+
+# 3. 줄바꿈 재정규화
+#git reset --hard
+
+# 4. 다시 추가
+#git add .
+
+# 5. 커밋
+#git commit -m "Normalize line endings"
