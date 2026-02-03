@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
-import { Link, useNavigate, useLocation} from 'react-router-dom'
+import { useNavigate, useLocation} from 'react-router-dom'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { useAuthStore } from '../../store/AuthStore'
-import { Bell, Search } from 'lucide-react'
+import { Bell, Crown, Headset, LogOut, Search, Settings, UserRound } from 'lucide-react'
 // import type {FC} from 'react'
 
 
@@ -98,12 +98,43 @@ export default function DefaultHeader({headerTitle} : headerProp){
                     <Bell />
                     {
                         loginId && 
-                        <Menu as="span" className="">
-                            
+                        <Menu as="div">
                             <MenuButton>{loginId}</MenuButton>
-                            <MenuItems>
+                            <MenuItems className='border-2 rounded-2xl p-2 m-2 space-y-2 absolute right-1 bg-white'>
+                                <MenuItem >
+                                    <div className='flex flex-row gap-x-2 hover:cursor-pointer hover:bg-[#f6f8fa]'>
+                                        <UserRound />
+                                        {loginId}
+                                    </div>
+                                </MenuItem>
+                                <div className='border-y-0 border-b'></div>
+                                <MenuItem >
+                                    <div className='flex flex-row gap-x-2 hover:cursor-pointer hover:bg-[#f6f8fa]'>
+                                        <UserRound />
+                                        View Profile
+                                    </div>
+                                </MenuItem>
                                 <MenuItem>
-                                    logout
+                                    <div className='flex flex-row gap-x-2 hover:cursor-pointer hover:bg-[#f6f8fa]'>
+                                        <Settings />Account Settings
+                                    </div>
+                                </MenuItem>
+                                <div className='border-y-0 border-b'></div>
+                                <MenuItem>
+                                    <div className='flex flex-row gap-x-2 hover:cursor-pointer hover:bg-[#f6f8fa]'>
+                                        <Headset />Support
+                                    </div>
+                                </MenuItem>
+                                <MenuItem>
+                                    <div className='flex flex-row gap-x-2 hover:cursor-pointer hover:bg-[#f6f8fa]'>
+                                        <Crown />Upgrade Account
+                                    </div>
+                                </MenuItem>
+                                <div className='border-y-0 border-b'></div>
+                                <MenuItem>
+                                    <div className='flex flex-row gap-x-2 hover:cursor-pointer hover:bg-[#f6f8fa]' onClick={handleLogout}>
+                                        <LogOut />logout
+                                    </div>
                                 </MenuItem>
                             </MenuItems>
                         </Menu>
