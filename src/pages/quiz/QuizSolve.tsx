@@ -1,6 +1,9 @@
 import { ChangeEvent, useEffect, useState, useRef } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import MockData from '../../data/User'
+import DefaultButton from "../../component/common/button/DefaultButton";
+import QuizInput from "../../component/common/input/QuizInput";
+import STModal from "../../component/common/modal/STModal";
 
 
 interface Quiz {
@@ -29,44 +32,63 @@ export default function QuizSolve(){
     const nav = useNavigate();
 
     const { mockQuizList } = MockData();
-    const quizPack = mockQuizList.filter(( quizlist )=> quizlist.id == location.state.quizPackId); // 여기서 데이터 구조안봄.
+    const quizPack = mockQuizList.filter(( quizlist )=> quizlist.id == location.state.quizPackId); 
     const quiz = quizPack[0].quiz;
 
-    // 클로드 참고, 마지막 문제에서 이슈가 있음. 
-    function* quizGenerator(items:{}[]){
-        for(let item of items){
-            yield item
+    const [ selectAnswerVal, setSelectAnswerVal ] = useState<any>(null);
+    const [ isModalOpen, setIsModalOpen] = useState(false);
+    const [ currentQuiz, setCurrentQuiz ] = useState<Quiz>();
+
+    const [ dialogTitle, setDialogTitle ] = useState<string>();
+    const [ dialogContent, setDialogContent ] = useState<string>();
+
+
+    // const [ progressPercent, setProgressPercent ] = useState();
+
+    let quizIdx = useRef(0);
+
+    const closeModal = (e:React.MouseEvent,nextSolve:boolean)=>{
+        e.preventDefault();
+        setIsModalOpen(false)
+        if(nextSolve){
+            quizIdx.current++;
+            setSelectAnswerVal(null)
         }
     }
-
-    // const generatorRef = useRef()//초기 렌더링 이후 렌더링 x
-    // const [ generator ] = useState(()=> quizGenerator(quiz));
-    const [ selectAnswerVal, setSelectAnswerVal ] = useState<any>();
-    const [ currentQuiz, setCurrentQuiz ] = useState<Quiz>();
-    let quizIdx = useRef(0);
-    // const [ currentIdx, setCurrentIdx] = useState<number>(0);
 
     const answerSelectHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setSelectAnswerVal(e.target.value)
     }
-
+    
+    
     const submitAnswer = () => {
-        // 정답 체크 
-        quizIdx.current++;
-        if(quizIdx.current === quiz.length){
-            window.confirm(' clear ')
-            nav('/quiz-pack')
+        if(selectAnswerVal===null){
+            setDialogTitle('정답을 클릭 해주세요!')
+            setIsModalOpen(true)
+            return
+        }
+        
+        if(quizIdx.current === quiz.length-1){
+            if(quiz[quizIdx.current].answer.correct == selectAnswerVal){
+                setDialogTitle('정답 입니다 .')
+                setDialogContent('문제집을 클리어 하셨습니다. !')
+            }else{
+                setDialogTitle('오답 입니다 .')
+                setDialogContent('문제집을 클리어 하셨습니다. !')
+            }
+            setIsModalOpen(true)
+            return 
         }
 
         if(quizIdx.current < quiz.length){
-            setCurrentQuiz(quiz[quizIdx.current])
-            
             if(quiz[quizIdx.current].answer.correct == selectAnswerVal){
-                window.confirm(' 정답입니다 \n 다음문제를 풀겠습니까?')
+                setDialogTitle('정답입니다 .')
+                setDialogContent('다음문제를 풀겠습니까?')
             }else{
-                window.confirm('틀렸습니다 \n 다음문제를 풀겠습니까?')
+                setDialogTitle('틀렸습니다 .')
+                setDialogContent('다음문제를 풀겠습니까?')
             }
-            setSelectAnswerVal(null)
+            setIsModalOpen(true)
         }
     }
 
@@ -76,64 +98,119 @@ export default function QuizSolve(){
 
     useEffect(()=>{
         setCurrentQuiz(quiz[quizIdx.current]);
-    },[quizIdx])
-
-
+    },[quizIdx.current])
 
     return( 
-
-    //정답 클릭 및 정답 제출 
-    <div className="flex flex-col ">
-        {currentQuiz?.title}
+    <div className="flex flex-col items-center border ">
+        <STModal
+            isModalOpen = {isModalOpen}
+            dialogTitle = {String(dialogTitle)}
+            dialogContent= {dialogContent}
+        >
+            {quizIdx.current+1 < quiz.length ? 
+            <div className="space-x-2 ">
+                <button
+                    type="button"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    onClick={(e:React.MouseEvent)=>closeModal(e,true)}
+                >
+                    다음 문제 풀기
+                </button>
+                <button
+                    type="button"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    onClick={(e:React.MouseEvent)=>closeModal(e,false)}
+                    >
+                    다시풀기
+                </button>
+            </div>
+            :
+            <div className="space-x-2 ">
+                <button
+                    type="button"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    onClick={(e:React.MouseEvent)=>{return nav('/quiz-pack')}}
+                >
+                    문제집 리스트로
+                </button>
+                <button
+                    type="button"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                    onClick={(e:React.MouseEvent)=>closeModal(e,false)}
+                >
+                    다시풀기
+                </button>
+            </div>
+            }
+        </STModal> 
         
-        <div>
-            <input 
-                id="radio1" 
-                name= "answer" 
-                type="radio" 
+        <div className="">
+            <p>현재 진행도 : {quizIdx.current+1}/{quiz.length}</p> 
+            <progress  value={quizIdx.current+1} max={quiz.length}>qwe</progress>
+        </div>
+
+        {/* 시간날 때 해보기 */}
+        {/* <div className="w-1/3 bg-black">
+            <div className={`w-[${progressPercent}%] bg-indigo-500`}>t</div>
+        </div>  */}
+        
+        <div className="w-1/2 flex flex-col p-3 m-3 bg-[#fbfbfb]">
+            <h1 className="text-gray-500"> Question {quizIdx.current+1}</h1>
+            <h2 className="mt-2 mb-2">{currentQuiz?.title}</h2>
+
+            <QuizInput
+                id='radio1'
+                name="answer"
+                labelText={String(currentQuiz?.answer?.answer1)}
+                type="radio"
                 onChange={answerSelectHandler} 
-                checked={selectAnswerVal==currentQuiz?.answer?.answer1} 
+                checked={selectAnswerVal === currentQuiz?.answer?.answer1} 
                 value={currentQuiz?.answer?.answer1} 
             />
-            <label htmlFor="radio1">{currentQuiz?.answer?.answer1}</label>
-        </div>
-        <div>
-            <input 
-                id="radio2" 
-                name= "answer" 
-                type="radio" 
-                onChange={answerSelectHandler}
-                checked={selectAnswerVal==currentQuiz?.answer?.answer2}
+
+            <QuizInput
+                id='radio2'
+                name="answer"
+                labelText={String(currentQuiz?.answer?.answer2)}
+                type="radio"
+                onChange={answerSelectHandler} 
+                checked={selectAnswerVal === currentQuiz?.answer?.answer2} 
                 value={currentQuiz?.answer?.answer2} 
             />
-            <label htmlFor="radio2">{currentQuiz?.answer?.answer2}</label>
-        </div>
-        <div>
-            <input 
-                id="radio3" 
-                name= "answer" 
-                type="radio" 
-                onChange={answerSelectHandler}
-                checked={selectAnswerVal==currentQuiz?.answer?.answer3}
+
+            <QuizInput
+                id='radio3'
+                name="answer"
+                labelText={String(currentQuiz?.answer?.answer3)}
+                type="radio"
+                onChange={answerSelectHandler} 
+                checked={selectAnswerVal === currentQuiz?.answer?.answer3} 
                 value={currentQuiz?.answer?.answer3}
             />
-            <label htmlFor="radio3">{currentQuiz?.answer?.answer3}</label>
-        </div>
-        <div>
-            <input 
-                id="radio4"
-                name= "answer" 
-                type="radio" 
-                onChange={answerSelectHandler}
-                checked={selectAnswerVal==currentQuiz?.answer?.answer4}
+
+            <QuizInput
+                id='radio4'
+                name="answer"
+                labelText={String(currentQuiz?.answer?.answer4)}
+                type="radio"
+                onChange={answerSelectHandler} 
+                checked={selectAnswerVal === currentQuiz?.answer?.answer4} 
                 value={currentQuiz?.answer?.answer4}
             />
-            <label htmlFor="radio4">{currentQuiz?.answer?.answer4}</label>
+
+            <div className="flex justify-center gap-2">
+                <DefaultButton
+                    Text='제출'
+                    onClick={submitAnswer}
+                    className="hover:bg-[#2262c6] hover:text-white"
+                />
+                <DefaultButton
+                    Text='힌트'
+                    onClick={handleHint}
+                    className="hover:bg-[#2262c6] hover:text-white"
+                />
+            </div>
         </div>
-
-        <div>현재 진행도 : {quizIdx.current+1}/{quiz.length}</div>
-
-        <button onClick={submitAnswer}>제출 </button>
-        <button onClick={handleHint}>힌트 </button>
-    </div>)
+    </div>
+    )
 }
