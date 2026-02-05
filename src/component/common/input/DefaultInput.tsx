@@ -10,7 +10,7 @@ const DefaultInput = forwardRef<HTMLInputElement, DefaultInputProps>(
         return (
         <input
             ref={ref}
-            className={styleClass|| ''}
+            className={styleClass}
             {...props}
         />
         )

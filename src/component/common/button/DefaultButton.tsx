@@ -10,7 +10,7 @@ const DefaultButton = forwardRef<HTMLButtonElement,DefaultButtonProps>(
     ({className,Text, ...props}) => {
         return (
             // <button className={'border p-3  rounded-xl' || className} {...props}>
-            <button className={ className || 'border p-3  rounded-xl'} {...props}>
+            <button className={ `${className} border p-3  rounded-xl`} {...props}>
                 {/* tailwind  */}
                 {Text || 'button'}
             </button>

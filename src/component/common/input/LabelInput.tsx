@@ -33,12 +33,12 @@ const LabelInput = forwardRef<HTMLInputElement,LabelInputProps >(
         <input 
             placeholder={placeHolder}
             ref={ref}
-            className={className?className:inputCss}
+            className={`${className} ${inputCss}`}
             {...props}
         />
         <label 
             htmlFor={props.id}
-            className={className?className:labelCss}
+            className={`${className} ${labelCss}`}
         >
             {labelText ? labelText : props.id}
         </label>
